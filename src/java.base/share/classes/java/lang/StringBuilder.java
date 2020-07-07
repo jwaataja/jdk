@@ -31,9 +31,12 @@ import org.checkerframework.checker.index.qual.LTLengthOf;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.sql.qual.MaybeDangerousSql;
+import org.checkerframework.checker.sql.qual.PolySql;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.checkerframework.framework.qual.AnnotatedFor;
+import org.checkerframework.framework.qual.HasQualifierParameter;
 
 import jdk.internal.HotSpotIntrinsicCandidate;
 
@@ -92,7 +95,8 @@ import jdk.internal.HotSpotIntrinsicCandidate;
  * @see         java.lang.String
  * @since       1.5
  */
-@AnnotatedFor({"lock", "nullness", "index"})
+@AnnotatedFor({"lock", "nullness", "index", "sql"})
+@HasQualifierParameter(MaybeDangerousSql.class)
 public final class StringBuilder
     extends AbstractStringBuilder
     implements java.io.Serializable, Comparable<StringBuilder>, CharSequence
@@ -131,7 +135,7 @@ public final class StringBuilder
      * @param   str   the initial contents of the buffer.
      */
     @HotSpotIntrinsicCandidate
-    public StringBuilder(String str) {
+    public @PolySql StringBuilder(@PolySql String str) {
         super(str.length() + 16);
         append(str);
     }
@@ -144,7 +148,7 @@ public final class StringBuilder
      *
      * @param      seq   the sequence to copy.
      */
-    public StringBuilder(CharSequence seq) {
+    public @PolySql StringBuilder(@PolySql CharSequence seq) {
         this(seq.length() + 16);
         append(seq);
     }
@@ -175,13 +179,13 @@ public final class StringBuilder
     }
 
     @Override
-    public StringBuilder append(@Nullable Object obj) {
+    public StringBuilder append(@PolySql StringBuilder this, @PolySql @Nullable Object obj) {
         return append(String.valueOf(obj));
     }
 
     @Override
     @HotSpotIntrinsicCandidate
-    public StringBuilder append(@Nullable String str) {
+    public StringBuilder append(@PolySql StringBuilder this, @PolySql @Nullable String str) {
         super.append(str);
         return this;
     }
@@ -205,13 +209,13 @@ public final class StringBuilder
      * @param   sb   the {@code StringBuffer} to append.
      * @return  a reference to this object.
      */
-    public StringBuilder append(@Nullable StringBuffer sb) {
+    public StringBuilder append(@PolySql StringBuilder this, @PolySql @Nullable StringBuffer sb) {
         super.append(sb);
         return this;
     }
 
     @Override
-    public StringBuilder append(@Nullable CharSequence s) {
+    public StringBuilder append(@PolySql StringBuilder this, @PolySql @Nullable CharSequence s) {
         super.append(s);
         return this;
     }
@@ -220,13 +224,13 @@ public final class StringBuilder
      * @throws     IndexOutOfBoundsException {@inheritDoc}
      */
     @Override
-    public StringBuilder append(@Nullable CharSequence s, @IndexOrHigh({"#1"}) int start, @IndexOrHigh({"#1"}) int end) {
+    public StringBuilder append(@PolySql StringBuilder this, @PolySql @Nullable CharSequence s, @IndexOrHigh({"#1"}) int start, @IndexOrHigh({"#1"}) int end) {
         super.append(s, start, end);
         return this;
     }
 
     @Override
-    public StringBuilder append(char[] str) {
+    public StringBuilder append(@PolySql StringBuilder this, char @PolySql [] str) {
         super.append(str);
         return this;
     }
@@ -235,7 +239,7 @@ public final class StringBuilder
      * @throws IndexOutOfBoundsException {@inheritDoc}
      */
     @Override
-    public StringBuilder append(char[] str, @IndexOrHigh({"#1"}) int offset, @LTLengthOf(value={"#1"}, offset={"#2 - 1"}) @NonNegative int len) {
+    public StringBuilder append(@PolySql StringBuilder this, char @PolySql [] str, @IndexOrHigh({"#1"}) int offset, @LTLengthOf(value={"#1"}, offset={"#2 - 1"}) @NonNegative int len) {
         super.append(str, offset, len);
         return this;
     }
@@ -309,7 +313,7 @@ public final class StringBuilder
      * @throws StringIndexOutOfBoundsException {@inheritDoc}
      */
     @Override
-    public StringBuilder replace(@NonNegative int start, @NonNegative int end, String str) {
+    public StringBuilder replace(@PolySql StringBuilder this, @NonNegative int start, @NonNegative int end, @PolySql String str) {
         super.replace(start, end, str);
         return this;
     }
@@ -318,7 +322,7 @@ public final class StringBuilder
      * @throws StringIndexOutOfBoundsException {@inheritDoc}
      */
     @Override
-    public StringBuilder insert(@NonNegative int index, char[] str, @IndexOrHigh({"#2"}) int offset,
+    public StringBuilder insert(@PolySql StringBuilder this, @NonNegative int index, char @PolySql [] str, @IndexOrHigh({"#2"}) int offset,
                                 @IndexOrHigh({"#2"}) int len)
     {
         super.insert(index, str, offset, len);
@@ -329,7 +333,7 @@ public final class StringBuilder
      * @throws StringIndexOutOfBoundsException {@inheritDoc}
      */
     @Override
-    public StringBuilder insert(@NonNegative int offset, @Nullable Object obj) {
+    public StringBuilder insert(@PolySql StringBuilder this, @NonNegative int offset, @PolySql @Nullable Object obj) {
             super.insert(offset, obj);
             return this;
     }
@@ -338,7 +342,7 @@ public final class StringBuilder
      * @throws StringIndexOutOfBoundsException {@inheritDoc}
      */
     @Override
-    public StringBuilder insert(@NonNegative int offset, @Nullable String str) {
+    public StringBuilder insert(@PolySql StringBuilder this, @NonNegative int offset, @PolySql @Nullable String str) {
         super.insert(offset, str);
         return this;
     }
@@ -347,7 +351,7 @@ public final class StringBuilder
      * @throws StringIndexOutOfBoundsException {@inheritDoc}
      */
     @Override
-    public StringBuilder insert(@NonNegative int offset, char[] str) {
+    public StringBuilder insert(@PolySql StringBuilder this, @NonNegative int offset, char @PolySql [] str) {
         super.insert(offset, str);
         return this;
     }
@@ -356,7 +360,7 @@ public final class StringBuilder
      * @throws IndexOutOfBoundsException {@inheritDoc}
      */
     @Override
-    public StringBuilder insert(@NonNegative int dstOffset, @Nullable CharSequence s) {
+    public StringBuilder insert(@PolySql StringBuilder this, @NonNegative int dstOffset, @PolySql @Nullable CharSequence s) {
             super.insert(dstOffset, s);
             return this;
     }
@@ -365,7 +369,7 @@ public final class StringBuilder
      * @throws IndexOutOfBoundsException {@inheritDoc}
      */
     @Override
-    public StringBuilder insert(@NonNegative int dstOffset, @Nullable CharSequence s,
+    public StringBuilder insert(@PolySql StringBuilder this, @NonNegative int dstOffset, @PolySql @Nullable CharSequence s,
                                 @NonNegative int start, @NonNegative int end)
     {
         super.insert(dstOffset, s, start, end);
@@ -459,7 +463,7 @@ public final class StringBuilder
     @SideEffectFree
     @Override
     @HotSpotIntrinsicCandidate
-    public String toString(@GuardSatisfied StringBuilder this) {
+    public @PolySql String toString(@PolySql @GuardSatisfied StringBuilder this) {
         // Create a copy, don't share the array
         return isLatin1() ? StringLatin1.newString(value, 0, count)
                           : StringUTF16.newString(value, 0, count);
